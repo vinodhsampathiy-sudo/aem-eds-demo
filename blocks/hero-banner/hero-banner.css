@@ -1,129 +1,156 @@
+/* hero-banner.css */
+
 .hero-banner {
-  --hero-banner-bg-start: #3b2d8f;
-  --hero-banner-bg-end: #1e3a8a;
+  --hero-banner-bg-start: #0d1b3e;
+  --hero-banner-bg-mid: #1a1060;
+  --hero-banner-bg-end: #2d0a6e;
   --hero-banner-text: #ffffff;
-  --hero-banner-eyebrow-color: rgba(255, 255, 255, 0.75);
+  --hero-banner-text-muted: rgba(255, 255, 255, 0.75);
+  --hero-banner-eyebrow-bg: rgba(255, 255, 255, 0.12);
+  --hero-banner-eyebrow-color: rgba(255, 255, 255, 0.9);
   --hero-banner-accent: #7c3aed;
-  --hero-banner-accent-dark: #6d28d9;
-  --hero-banner-accent-secondary: transparent;
-  --hero-banner-heading-size: clamp(2rem, 6vw, 3.75rem);
+  --hero-banner-accent-light: #a78bfa;
+  --hero-banner-accent-dark: #5b21b6;
+  --hero-banner-accent-secondary: #4f46e5;
+  --hero-banner-divider: rgba(255, 255, 255, 0.2);
+  --hero-banner-stat-value-size: clamp(1.75rem, 4vw, 2.5rem);
+  --hero-banner-heading-size: clamp(2rem, 5vw, 3.75rem);
   --hero-banner-body-size: clamp(1rem, 2vw, 1.2rem);
-  --hero-banner-padding-x: clamp(1.25rem, 5vw, 5rem);
-  --hero-banner-padding-y: clamp(3rem, 8vw, 6rem);
-  --hero-banner-min-height: clamp(480px, 60vw, 720px);
-  --hero-banner-stat-divider: rgba(255, 255, 255, 0.25);
-  --hero-banner-eyebrow-size: clamp(0.75rem, 1.5vw, 0.875rem);
-  --hero-banner-stat-value-size: clamp(1.5rem, 3vw, 2.25rem);
-  --hero-banner-stat-label-size: clamp(0.75rem, 1.5vw, 0.875rem);
+  --hero-banner-padding-v: clamp(3rem, 8vw, 6rem);
+  --hero-banner-padding-h: clamp(1.25rem, 5vw, 4rem);
 
   position: relative;
   overflow: hidden;
-  min-height: var(--hero-banner-min-height);
-  display: flex;
-  align-items: center;
-  background: linear-gradient(135deg, var(--hero-banner-bg-start) 0%, var(--hero-banner-bg-end) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--hero-banner-bg-start) 0%,
+    var(--hero-banner-bg-mid) 50%,
+    var(--hero-banner-bg-end) 100%
+  );
   color: var(--hero-banner-text);
-}
-
-/* ── Light variant ── */
-.hero-banner.light {
-  --hero-banner-bg-start: #f5f3ff;
-  --hero-banner-bg-end: #ede9fe;
-  --hero-banner-text: #1a1a2e;
-  --hero-banner-eyebrow-color: #6d28d9;
-  --hero-banner-accent: #7c3aed;
-  --hero-banner-accent-dark: #6d28d9;
-  --hero-banner-stat-divider: rgba(0, 0, 0, 0.15);
-}
-
-/* ── Background image layer ── */
-.hero-banner-background {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-}
-
-.hero-banner-background img {
   width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center right;
-  display: block;
-  opacity: 0.35;
-}
-
-.hero-banner.light .hero-banner-background img {
-  opacity: 0.55;
-}
-
-/* ── Content layer ── */
-.hero-banner-content {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  padding: var(--hero-banner-padding-y) var(--hero-banner-padding-x);
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-  max-width: 1280px;
-  margin-inline: auto;
   box-sizing: border-box;
 }
 
-/* ── Eyebrow ── */
-.hero-banner-eyebrow {
-  display: inline-block;
-  font-size: var(--hero-banner-eyebrow-size);
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--hero-banner-eyebrow-color);
-  margin: 0;
-  padding: 0;
+/* ─── Decorative radial graphic elements ─── */
+.hero-banner::before,
+.hero-banner::after {
+  content: '';
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 0;
 }
 
-/* ── Headline ── */
-.hero-banner-content h1 {
+.hero-banner::before {
+  width: clamp(300px, 60vw, 700px);
+  height: clamp(300px, 60vw, 700px);
+  top: -20%;
+  right: -15%;
+  background: radial-gradient(
+    circle,
+    rgba(124, 58, 237, 0.45) 0%,
+    rgba(79, 70, 229, 0.2) 40%,
+    transparent 70%
+  );
+}
+
+.hero-banner::after {
+  width: clamp(200px, 40vw, 500px);
+  height: clamp(200px, 40vw, 500px);
+  bottom: -10%;
+  right: 5%;
+  background: radial-gradient(
+    circle,
+    rgba(167, 139, 250, 0.3) 0%,
+    rgba(124, 58, 237, 0.15) 40%,
+    transparent 70%
+  );
+}
+
+/* ─── Inner content wrapper ─── */
+.hero-banner-content {
+  position: relative;
+  z-index: 1;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: var(--hero-banner-padding-v) var(--hero-banner-padding-h);
+  display: flex;
+  flex-direction: column;
+  gap: clamp(1.5rem, 3vw, 2.5rem);
+}
+
+/* ─── Text section ─── */
+.hero-banner-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  max-width: 680px;
+}
+
+/* ─── Eyebrow ─── */
+.hero-banner-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+}
+
+.hero-banner-eyebrow p {
+  display: inline-block;
+  margin: 0;
+  padding: 0.35em 1em;
+  background-color: var(--hero-banner-eyebrow-bg);
+  color: var(--hero-banner-eyebrow-color);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  font-size: clamp(0.75rem, 1.5vw, 0.875rem);
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
+}
+
+/* ─── Headline ─── */
+.hero-banner-headline {
+  margin: 0;
+}
+
+.hero-banner-headline h1 {
+  margin: 0;
+  color: var(--hero-banner-text);
   font-size: var(--hero-banner-heading-size);
   font-weight: 800;
   line-height: 1.1;
-  color: var(--hero-banner-text);
+  letter-spacing: -0.02em;
+}
+
+/* ─── Body text ─── */
+.hero-banner-body {
   margin: 0;
-  max-width: 18ch;
 }
 
-.hero-banner.light .hero-banner-content h1 {
-  color: var(--hero-banner-text);
-}
-
-/* ── Body text ── */
-.hero-banner-body-text {
+.hero-banner-body p {
+  margin: 0;
+  color: var(--hero-banner-text-muted);
   font-size: var(--hero-banner-body-size);
   line-height: 1.65;
-  color: rgba(255, 255, 255, 0.85);
-  margin: 0;
-  max-width: 52ch;
+  max-width: 56ch;
 }
 
-.hero-banner.light .hero-banner-body-text {
-  color: rgba(26, 26, 46, 0.75);
-}
-
-/* ── CTA group ── */
-.hero-banner-cta-group {
+/* ─── CTA group ─── */
+.hero-banner-ctas {
   display: flex;
   flex-wrap: wrap;
   gap: 0.875rem;
   align-items: center;
-  margin-top: 0.25rem;
 }
 
-/* Shared button base */
-.hero-banner .button-container {
+.hero-banner-ctas .button-container {
   margin: 0;
 }
 
+/* Base button reset */
 .hero-banner .button-container a.button {
   display: inline-flex;
   align-items: center;
@@ -132,169 +159,148 @@
   padding: 0.75em 1.75em;
   border-radius: 8px;
   font-size: clamp(0.875rem, 1.5vw, 1rem);
-  font-weight: 700;
+  font-weight: 600;
   font-style: normal;
   text-decoration: none;
   border: 2px solid transparent;
   cursor: pointer;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, transform 0.1s ease, box-shadow 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.1s ease;
+  background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.5);
+  color: var(--hero-banner-text);
   white-space: nowrap;
+}
+
+.hero-banner .button-container a.button:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.75);
 }
 
 .hero-banner .button-container a.button:active {
   transform: translateY(1px);
 }
 
-/* Primary — solid fill */
+.hero-banner .button-container a.button:focus-visible {
+  outline: 2px solid var(--hero-banner-accent-light);
+  outline-offset: 3px;
+}
+
+/* Primary CTA — solid filled */
 .hero-banner .button-container a.button.primary {
   background-color: var(--hero-banner-accent);
-  color: #ffffff;
   border-color: var(--hero-banner-accent);
-  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4);
+  color: #ffffff;
+  box-shadow: 0 4px 16px rgba(124, 58, 237, 0.4);
 }
 
 .hero-banner .button-container a.button.primary:hover {
   background-color: var(--hero-banner-accent-dark);
   border-color: var(--hero-banner-accent-dark);
-  box-shadow: 0 6px 20px rgba(109, 40, 217, 0.5);
+  box-shadow: 0 6px 20px rgba(124, 58, 237, 0.55);
 }
 
-.hero-banner.light .button-container a.button.primary {
-  box-shadow: 0 4px 14px rgba(124, 58, 237, 0.3);
+.hero-banner .button-container a.button.primary:focus-visible {
+  outline-color: #ffffff;
 }
 
-/* Secondary — outline/ghost */
+/* Secondary CTA — outline/ghost */
 .hero-banner .button-container a.button.secondary {
   background-color: transparent;
+  border-color: rgba(255, 255, 255, 0.45);
   color: var(--hero-banner-text);
-  border-color: rgba(255, 255, 255, 0.6);
+  box-shadow: none;
 }
 
 .hero-banner .button-container a.button.secondary:hover {
-  background-color: rgba(255, 255, 255, 0.12);
-  border-color: rgba(255, 255, 255, 0.9);
-}
-
-.hero-banner.light .button-container a.button.secondary {
-  border-color: rgba(109, 40, 217, 0.5);
-  color: var(--hero-banner-accent-dark);
-}
-
-.hero-banner.light .button-container a.button.secondary:hover {
-  background-color: rgba(109, 40, 217, 0.08);
-  border-color: var(--hero-banner-accent-dark);
-}
-
-/* Focus styles */
-.hero-banner .button-container a.button:focus-visible {
-  outline: 3px solid rgba(255, 255, 255, 0.8);
-  outline-offset: 3px;
-}
-
-.hero-banner.light .button-container a.button:focus-visible {
-  outline-color: var(--hero-banner-accent);
+  background-color: rgba(255, 255, 255, 0.1);
+  border-color: rgba(255, 255, 255, 0.8);
 }
 
 /* Plain text links */
 .hero-banner a:not(.button) {
-  color: var(--hero-banner-text);
+  color: var(--hero-banner-accent-light);
   font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }
 
-/* ── Stats section ── */
+.hero-banner a:not(.button):hover {
+  color: #ffffff;
+}
+
+/* ─── Stats section ─── */
 .hero-banner-stats {
-  margin-top: 0.75rem;
-  padding-top: 1.5rem;
-  border-top: 1px solid var(--hero-banner-stat-divider);
-}
-
-.hero-banner-stats dl,
-.hero-banner-stats ul {
-  list-style: none;
-  margin: 0;
-  padding: 0;
   display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem 2rem;
-}
-
-.hero-banner-stats dl {
-  display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   gap: 0;
 }
 
-/* Stat items — when authored as a definition list */
-.hero-banner-stats dt {
-  font-size: var(--hero-banner-stat-value-size);
-  font-weight: 800;
-  color: var(--hero-banner-text);
-  line-height: 1.1;
+.hero-banner-stats-divider {
   width: 100%;
+  height: 1px;
+  background-color: var(--hero-banner-divider);
+  margin-bottom: clamp(1.25rem, 3vw, 2rem);
 }
 
-.hero-banner-stats dd {
-  font-size: var(--hero-banner-stat-label-size);
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.7);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  margin: 0 0 1.25rem;
-  width: 100%;
+/* Stats grid — repeating collection */
+.hero-banner > ul,
+.hero-banner-stats > ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 1.25rem 1.5rem;
 }
 
-.hero-banner.light .hero-banner-stats dd {
-  color: rgba(26, 26, 46, 0.6);
-}
-
-/* Stat items — when authored as a list */
-.hero-banner-stats li {
+.hero-banner > ul > li,
+.hero-banner-stats > ul > li {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  background: transparent;
+  border: none;
 }
 
-/* Stat item inner elements */
-.hero-banner-stat-value {
+.hero-banner-item-stat-value,
+.hero-banner-item-stat-value p {
+  margin: 0;
+  color: var(--hero-banner-text);
   font-size: var(--hero-banner-stat-value-size);
   font-weight: 800;
-  color: var(--hero-banner-text);
   line-height: 1.1;
+  letter-spacing: -0.02em;
 }
 
-.hero-banner-stat-label {
-  font-size: var(--hero-banner-stat-label-size);
-  font-weight: 500;
-  color: rgba(255, 255, 255, 0.7);
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
+.hero-banner-item-stat-label,
+.hero-banner-item-stat-label p {
+  margin: 0;
+  color: var(--hero-banner-text-muted);
+  font-size: clamp(0.8rem, 1.5vw, 0.9rem);
+  font-weight: 400;
+  line-height: 1.4;
 }
 
-.hero-banner.light .hero-banner-stat-label {
-  color: rgba(26, 26, 46, 0.6);
-}
-
-/* Dividers between stat items */
-.hero-banner-stats li + li,
-.hero-banner-stats .hero-banner-stat-item + .hero-banner-stat-item {
-  padding-left: 2rem;
-  border-left: 1px solid var(--hero-banner-stat-divider);
-}
-
-/* Generic stat item div wrapper */
-.hero-banner-stat-item {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-/* ── Tablet (600px+) ── */
+/* ─── Tablet (600px+) ─── */
 @media (min-width: 600px) {
-  .hero-banner-content {
-    gap: 1.5rem;
+  .hero-banner > ul,
+  .hero-banner-stats > ul {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 1.5rem 2rem;
   }
 
-  .hero-banner-stats dl,
-  .hero-banner
+  .hero-banner::before {
+    opacity: 1;
+  }
+}
+
+/* ─── Tablet (768px+) ─── */
+@media (min-width: 768px) {
+  .hero-banner > ul,
+  .hero-banner-stats > ul {
+    grid-template-columns: repeat(auto-fill, minmax(180px
