@@ -22,60 +22,35 @@ function decorateButtons(container) {
 
 const STAT_PATTERN = /^([\d.,]+\s*[%×xXkKmMbB]*\+?)\s+(.+)$/;
 
-function buildStatItem(valueText, labelText) {
-  const item = document.createElement('div');
-  item.className = 'hero-banner-stat';
-
-  const dt = document.createElement('dt');
-  dt.className = 'hero-banner-stat-value';
-  dt.textContent = valueText;
-
-  const dd = document.createElement('dd');
-  dd.className = 'hero-banner-stat-label';
-  dd.textContent = labelText;
-
-  item.append(dt, dd);
-  return item;
-}
-
-function buildStats(statRows) {
+function buildStats(statsRow) {
   const dl = document.createElement('dl');
   dl.className = 'hero-banner-stats';
-  dl.setAttribute('aria-label', 'Key metrics');
 
-  statRows.forEach((row) => {
-    const cells = [...row.children];
-    if (cells.length >= 2) {
-      // Each cell is a separate column: first cell = value, second = label
-      const valueText = cells[0]?.textContent.trim();
-      const labelText = cells[1]?.textContent.trim();
-      if (valueText) {
-        dl.append(buildStatItem(valueText, labelText || ''));
-      }
-    } else if (cells.length === 1) {
-      // Single cell — try to parse "value label" pairs from paragraphs or pipe-separated text
-      const paragraphs = [...cells[0].querySelectorAll('p')];
-      if (paragraphs.length >= 2) {
-        // Pairs of paragraphs: p[0]=value, p[1]=label, p[2]=value, p[3]=label, ...
-        for (let i = 0; i + 1 < paragraphs.length; i += 2) {
-          const valueText = paragraphs[i].textContent.trim();
-          const labelText = paragraphs[i + 1].textContent.trim();
-          if (valueText) dl.append(buildStatItem(valueText, labelText));
-        }
-      } else {
-        // Pipe-separated fallback
-        const rawText = cells[0].textContent.trim();
-        rawText.split('|').map((s) => s.trim()).filter(Boolean).forEach((segment) => {
-          const match = segment.match(STAT_PATTERN);
-          if (match) {
-            dl.append(buildStatItem(match[1].trim(), match[2].trim()));
-          } else {
-            dl.append(buildStatItem(segment, ''));
-          }
-        });
-      }
+  const addStat = (text) => {
+    const item = document.createElement('div');
+    item.className = 'hero-banner-stat';
+    const match = text.match(STAT_PATTERN);
+    if (match) {
+      const dt = document.createElement('dt');
+      dt.textContent = match[1].trim();
+      const dd = document.createElement('dd');
+      dd.textContent = match[2].trim();
+      item.append(dt, dd);
+    } else {
+      const dt = document.createElement('dt');
+      dt.textContent = text;
+      item.append(dt);
     }
-  });
+    dl.append(item);
+  };
+
+  const directCells = [...statsRow.children].filter((el) => el.textContent.trim());
+
+  if (directCells.length > 1) {
+    directCells.forEach((cell) => addStat(cell.textContent.trim()));
+  } else {
+    statsRow.textContent.trim().split('|').map((s) => s.trim()).filter(Boolean).forEach(addStat);
+  }
 
   return dl;
 }
@@ -83,111 +58,78 @@ function buildStats(statRows) {
 export default function decorate(block) {
   const rows = [...block.children];
 
-  // Identify zones by scanning rows for their content type
-  let eyebrowRow = null;
-  let headlineRow = null;
-  let bodyRow = null;
-  const ctaRows = [];
-  const statRows = [];
+  // Determine row indices based on content zones:
+  // Row 0: background-image (optional)
+  // Row 1: eyebrow
+  // Row 2: headline
+  // Row 3: body-text
+  // Row 4: cta-primary
+  // Row 5: cta-secondary
+  // Row 6: stats-row
+  // Handle optional background-image: check if first row contains an img
+  let rowIndex = 0;
+  let bgRow = null;
+  const firstRowImg = rows[0]?.querySelector('img');
+  if (firstRowImg) {
+    bgRow = rows[rowIndex];
+    rowIndex += 1;
+  }
 
-  rows.forEach((row) => {
-    const hasH1 = row.querySelector('h1');
-    const hasH2 = row.querySelector('h2');
-    const hasLink = row.querySelector('a');
-    const hasImg = row.querySelector('img, picture');
+  const eyebrowRow = rows[rowIndex];
+  rowIndex += 1;
+  const headlineRow = rows[rowIndex];
+  rowIndex += 1;
+  const bodyRow = rows[rowIndex];
+  rowIndex += 1;
+  const ctaPrimaryRow = rows[rowIndex];
+  rowIndex += 1;
+  const ctaSecondaryRow = rows[rowIndex];
+  rowIndex += 1;
+  const statsRow = rows[rowIndex];
 
-    if (hasH1 || hasH2) {
-      headlineRow = row;
-      return;
-    }
-
-    if (hasLink) {
-      ctaRows.push(row);
-      return;
-    }
-
-    if (hasImg) {
-      // background image row — skip for now, handled separately
-      return;
-    }
-
-    const paragraphs = [...row.querySelectorAll('p')];
-    const directCells = [...row.children];
-
-    // Detect stat rows: multiple cells OR cells with numeric-looking content
-    const looksLikeStat = directCells.length > 1 ||
-      (paragraphs.length >= 2 && /[\d,]+/.test(paragraphs[0]?.textContent || ''));
-
-    if (looksLikeStat && (eyebrowRow || headlineRow)) {
-      statRows.push(row);
-      return;
-    }
-
-    const text = row.textContent.trim();
-    if (!text) return;
-
-    // Short uppercase text with no sentence structure → eyebrow
-    if (!eyebrowRow && !headlineRow && text.length < 80 && text === text.toUpperCase()) {
-      eyebrowRow = row;
-      return;
-    }
-
-    // First non-eyebrow, non-headline paragraph block → body text
-    if (headlineRow && !bodyRow) {
-      bodyRow = row;
-      return;
-    }
-
-    // Fallback: if we haven't found eyebrow yet and headline not found
-    if (!eyebrowRow && !headlineRow) {
-      eyebrowRow = row;
-    } else if (!bodyRow) {
-      bodyRow = row;
-    } else {
-      statRows.push(row);
-    }
-  });
-
-  // --- Build decorative background layer (gradient + radial graphic) ---
+  // --- Background layer ---
   const bgLayer = document.createElement('div');
   bgLayer.className = 'hero-banner-background';
   bgLayer.setAttribute('aria-hidden', 'true');
 
-  // Decorative radial graphic element
-  const radial = document.createElement('div');
-  radial.className = 'hero-banner-radial';
-  radial.setAttribute('aria-hidden', 'true');
-  bgLayer.append(radial);
+  if (bgRow) {
+    const bgImg = bgRow.querySelector('img');
+    if (bgImg) {
+      bgImg.setAttribute('loading', 'eager');
+      bgImg.setAttribute('fetchpriority', 'high');
+      bgImg.setAttribute('alt', '');
+      bgImg.removeAttribute('width');
+      bgImg.removeAttribute('height');
+      bgLayer.append(bgImg);
+    }
+  }
 
-  // --- Build content layer ---
+  // --- Content layer ---
   const content = document.createElement('div');
   content.className = 'hero-banner-content';
 
   // Eyebrow
   if (eyebrowRow) {
-    const eyebrowEl = eyebrowRow.querySelector('p') || eyebrowRow.firstElementChild;
+    const eyebrowEl = eyebrowRow.querySelector('p, h2, h3, h4, h5, h6') || eyebrowRow.firstElementChild;
     if (eyebrowEl) {
-      const eyebrow = document.createElement('p');
-      eyebrow.className = 'hero-banner-eyebrow';
-      eyebrow.textContent = eyebrowEl.textContent.trim();
-      // Visually hidden span for screen readers if needed
-      const srSpan = document.createElement('span');
-      srSpan.className = 'visually-hidden';
-      srSpan.textContent = eyebrowEl.textContent.trim();
-      eyebrow.setAttribute('aria-hidden', 'true');
-      content.append(eyebrow);
-      // Add a visually-hidden version for screen readers
-      const srEyebrow = document.createElement('p');
-      srEyebrow.className = 'hero-banner-eyebrow-sr';
-      srEyebrow.textContent = eyebrowEl.textContent.trim();
-      content.append(srEyebrow);
+      eyebrowEl.className = 'hero-banner-eyebrow';
+      // Add a visually hidden prefix for screen readers if the dot is decorative
+      const dotSpan = document.createElement('span');
+      dotSpan.className = 'hero-banner-eyebrow-dot';
+      dotSpan.setAttribute('aria-hidden', 'true');
+      dotSpan.textContent = '● ';
+      eyebrowEl.prepend(dotSpan);
+      content.append(eyebrowEl);
     }
   }
 
   // Headline
   if (headlineRow) {
-    const headline = headlineRow.querySelector('h1, h2, h3');
-    if (headline) content.append(headline);
+    const headlineEl = headlineRow.querySelector('h1, h2, h3') || headlineRow.firstElementChild;
+    if (headlineEl) {
+      headlineEl.className = 'hero-banner-headline';
+      content.append(headlineEl);
+    }
   }
 
   // Body text
@@ -199,49 +141,44 @@ export default function decorate(block) {
     }
   }
 
-  // CTAs
-  if (ctaRows.length > 0) {
-    const ctaWrapper = document.createElement('div');
-    ctaWrapper.className = 'hero-banner-ctas';
-    ctaRows.forEach((row) => {
-      while (row.firstElementChild) ctaWrapper.append(row.firstElementChild);
-    });
+  // CTA buttons wrapper
+  const ctaWrapper = document.createElement('div');
+  ctaWrapper.className = 'hero-banner-cta';
+
+  if (ctaPrimaryRow) {
+    while (ctaPrimaryRow.firstElementChild) {
+      ctaWrapper.append(ctaPrimaryRow.firstElementChild);
+    }
+  }
+  if (ctaSecondaryRow) {
+    while (ctaSecondaryRow.firstElementChild) {
+      ctaWrapper.append(ctaSecondaryRow.firstElementChild);
+    }
+  }
+
+  if (ctaWrapper.children.length > 0) {
     content.append(ctaWrapper);
   }
 
-  // Stats
-  if (statRows.length > 0) {
-    const statsSection = document.createElement('div');
-    statsSection.className = 'hero-banner-stats-section';
-
+  // Stats row
+  if (statsRow) {
     const divider = document.createElement('hr');
-    divider.className = 'hero-banner-stats-divider';
+    divider.className = 'hero-banner-divider';
     divider.setAttribute('aria-hidden', 'true');
-    statsSection.append(divider);
+    content.append(divider);
 
-    const statsDl = buildStats(statRows);
-    statsSection.append(statsDl);
-    content.append(statsSection);
+    const statsEl = buildStats(statsRow);
+    content.append(statsEl);
   }
 
-  // Assemble block
+  // Set accessibility attributes on the block
+  block.setAttribute('role', 'banner');
+  const headlineText = block.querySelector('h1, h2, h3')?.textContent?.trim()
+    || 'Hero banner';
+  block.setAttribute('aria-label', headlineText);
+
   block.replaceChildren(bgLayer, content);
 
-  // Set ARIA role on block
-  block.setAttribute('role', 'banner');
-  block.setAttribute('aria-label', 'Hero banner — Quality Engineering Platform');
-
-  // Decorate buttons
+  // Classify all CTAs
   decorateButtons(content);
-
-  // Lazy-load observer for below-fold images (none expected in this block, but future-proof)
-  const imgs = block.querySelectorAll('img');
-  imgs.forEach((img, i) => {
-    if (i === 0) {
-      img.setAttribute('loading', 'eager');
-      img.setAttribute('fetchpriority', 'high');
-    } else {
-      img.setAttribute('loading', 'lazy');
-    }
-  });
 }
