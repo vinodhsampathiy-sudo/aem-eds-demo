@@ -9,27 +9,17 @@
   --cards-block-card-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   --cards-block-card-shadow-hover: 0 6px 24px rgba(0, 0, 0, 0.13);
   --cards-block-gap: 24px;
-  --cards-block-padding: clamp(2rem, 5vw, 5rem) clamp(1rem, 5vw, 2rem);
+  --cards-block-padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 4vw, 2rem);
   --cards-block-accent: var(--color-brand, #4f46e5);
-  --cards-block-title-size: var(--heading-font-size-m, clamp(1rem, 2vw, 1.25rem));
-  --cards-block-desc-size: var(--body-font-size-m, 1rem);
-  --cards-block-icon-size: 1.75rem;
 
-  background-color: var(--cards-block-bg);
-  color: var(--cards-block-text);
-  padding: var(--cards-block-padding);
   box-sizing: border-box;
   width: 100%;
+  padding: var(--cards-block-padding);
+  background-color: var(--cards-block-bg);
+  color: var(--cards-block-text);
 }
 
-/* ── Inner wrapper ─────────────────────────────────────────────────────────── */
-
-.cards-block-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-}
-
-/* ── Header section (eyebrow + headline) ───────────────────────────────────── */
+/* ── Header section ─────────────────────────────────────────────────────── */
 
 .cards-block-header {
   text-align: center;
@@ -37,18 +27,17 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0.5rem;
+  gap: 0.75rem;
 }
 
 .cards-block-eyebrow {
   display: inline-block;
-  color: var(--cards-block-eyebrow-color);
   font-size: var(--cards-block-eyebrow-size);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  color: var(--cards-block-eyebrow-color);
   margin: 0;
-  padding: 0;
 }
 
 .cards-block-section-headline {
@@ -57,12 +46,11 @@
   line-height: 1.2;
   color: var(--cards-block-text);
   margin: 0;
-  padding: 0;
 }
 
-/* ── Card list grid ────────────────────────────────────────────────────────── */
+/* ── Card grid ──────────────────────────────────────────────────────────── */
 
-.cards-block-list {
+.cards-block > ul.cards-block-list {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -72,22 +60,28 @@
 }
 
 @media (min-width: 600px) {
-  .cards-block-list {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 900px) {
-  .cards-block-list {
+  .cards-block > ul.cards-block-list {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   }
 }
 
-/* ── Individual card ───────────────────────────────────────────────────────── */
+@media (min-width: 900px) {
+  .cards-block > ul.cards-block-list {
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+}
+
+/* ── Card item ──────────────────────────────────────────────────────────── */
 
 .cards-block-item {
   display: flex;
   flex-direction: column;
+}
+
+.cards-block-article {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
   background-color: var(--cards-block-card-bg);
   border-radius: var(--cards-block-card-radius);
   box-shadow: var(--cards-block-card-shadow);
@@ -95,24 +89,20 @@
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
-.cards-block-item:hover {
+.cards-block-article:hover {
   box-shadow: var(--cards-block-card-shadow-hover);
   transform: translateY(-2px);
 }
 
-/* ── Card image ────────────────────────────────────────────────────────────── */
+/* ── Card image ─────────────────────────────────────────────────────────── */
 
 .cards-block-item-image {
   line-height: 0;
   flex-shrink: 0;
 }
 
-.cards-block-item-image picture {
-  display: block;
-  width: 100%;
-}
-
-.cards-block-item-image img {
+.cards-block-item-image img,
+.cards-block-item-image picture img {
   width: 100%;
   aspect-ratio: 16 / 9;
   object-fit: cover;
@@ -121,7 +111,7 @@
   height: auto;
 }
 
-/* ── Card body ─────────────────────────────────────────────────────────────── */
+/* ── Card body ──────────────────────────────────────────────────────────── */
 
 .cards-block-item-body {
   display: flex;
@@ -131,66 +121,58 @@
   flex: 1 1 auto;
 }
 
-/* ── Emoji icon ────────────────────────────────────────────────────────────── */
+/* ── Emoji icon ─────────────────────────────────────────────────────────── */
 
 .cards-block-item-icon {
-  font-size: var(--cards-block-icon-size);
+  font-size: 1.75rem;
   line-height: 1;
   margin: 0 0 0.25rem;
-  padding: 0;
   user-select: none;
 }
 
-/* ── Card title ────────────────────────────────────────────────────────────── */
+/* ── Card title ─────────────────────────────────────────────────────────── */
 
 .cards-block-item-title {
-  font-size: var(--cards-block-title-size);
+  font-size: var(--heading-font-size-s, clamp(1rem, 2.5vw, 1.25rem));
   font-weight: 700;
   line-height: 1.3;
   color: var(--cards-block-text);
   margin: 0;
-  padding: 0;
 }
 
-/* ── Card description ──────────────────────────────────────────────────────── */
+/* ── Card description ───────────────────────────────────────────────────── */
 
 .cards-block-item-description {
-  font-size: var(--cards-block-desc-size);
+  font-size: var(--body-font-size-m, 1rem);
   line-height: 1.6;
   color: var(--color-text-secondary, #555);
   margin: 0;
-  padding: 0;
 }
 
-.cards-block-item-description p {
-  margin: 0 0 0.5em;
-}
-
-.cards-block-item-description p:last-child {
+.cards-block-item-description:last-child {
   margin-bottom: 0;
 }
 
-/* ── Buttons / CTAs ────────────────────────────────────────────────────────── */
+/* ── Buttons / CTAs inside cards ────────────────────────────────────────── */
 
 .cards-block .button-container {
-  margin: 0.5rem 0 0;
+  margin-top: auto;
+  padding-top: 0.75rem;
 }
 
 .cards-block .button-container a.button {
   display: inline-flex;
   align-items: center;
   gap: 0.5em;
-  padding: 0.6em 1.25em;
+  padding: 0.6em 1.4em;
   border-radius: 999px;
   font-weight: 600;
   font-style: normal;
-  font-size: var(--body-font-size-s, 0.875rem);
   text-decoration: none;
   border: 2px solid var(--cards-block-accent);
   background-color: transparent;
   color: var(--cards-block-accent);
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
-  cursor: pointer;
 }
 
 .cards-block .button-container a.button:hover {
@@ -222,7 +204,7 @@
 
 .cards-block .button-container a.button:focus-visible {
   outline: 2px solid var(--cards-block-accent);
-  outline-offset: 3px;
+  outline-offset: 2px;
 }
 
 .cards-block a:not(.button) {
@@ -232,7 +214,7 @@
   text-underline-offset: 0.2em;
 }
 
-/* ── Reduced motion ────────────────────────────────────────────────────────── */
+/* ── Reduced motion ─────────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
   .cards-block * {
