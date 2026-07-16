@@ -1,54 +1,56 @@
 .cards-block {
-  --cards-block-bg: transparent;
-  --cards-block-text: var(--color-text, #1a1a1a);
-  --cards-block-eyebrow-color: var(--color-brand, #4f46e5);
-  --cards-block-eyebrow-size: var(--body-font-size-s, 0.875rem);
-  --cards-block-headline-size: var(--heading-font-size-xl, clamp(1.75rem, 4vw, 2.5rem));
-  --cards-block-card-bg: var(--background-color, #fff);
+  --cards-block-bg: var(--background-color, #fff);
+  --cards-block-card-bg: #fff;
   --cards-block-card-radius: 12px;
   --cards-block-card-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
   --cards-block-card-shadow-hover: 0 6px 24px rgba(0, 0, 0, 0.13);
   --cards-block-gap: 24px;
   --cards-block-padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 4vw, 2rem);
-  --cards-block-accent: var(--color-brand, #4f46e5);
-
-  box-sizing: border-box;
-  width: 100%;
-  padding: var(--cards-block-padding);
-  background-color: var(--cards-block-bg);
-  color: var(--cards-block-text);
+  --cards-block-eyebrow-color: var(--color-brand, #4f46e5);
+  --cards-block-eyebrow-size: var(--body-font-size-s, 0.85rem);
+  --cards-block-heading-size: var(--heading-font-size-xl, clamp(1.75rem, 4vw, 2.5rem));
+  --cards-block-title-size: var(--heading-font-size-s, clamp(1rem, 2vw, 1.2rem));
+  --cards-block-desc-size: var(--body-font-size-m, 1rem);
+  --cards-block-icon-size: 1.75rem;
+  --cards-block-image-ratio: 4 / 3;
+  --cards-block-body-padding: 1.25rem;
+  --cards-block-text-color: var(--color-text, #1a1a1a);
+  --cards-block-text-muted: var(--color-text-muted, #555);
+  --cards-block-border: 1px solid #e8e8e8;
 }
 
-/* ── Header section ─────────────────────────────────────────────────────── */
+.cards-block {
+  background-color: var(--cards-block-bg);
+  padding: var(--cards-block-padding);
+  box-sizing: border-box;
+}
+
+/* ── Section header ─────────────────────────────────────────── */
 
 .cards-block-header {
   text-align: center;
-  margin-bottom: clamp(1.5rem, 4vw, 3rem);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.75rem;
+  margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
 }
 
 .cards-block-eyebrow {
   display: inline-block;
+  color: var(--cards-block-eyebrow-color);
   font-size: var(--cards-block-eyebrow-size);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--cards-block-eyebrow-color);
-  margin: 0;
+  margin: 0 0 0.5rem;
 }
 
-.cards-block-section-headline {
-  font-size: var(--cards-block-headline-size);
+.cards-block-header h2 {
+  font-size: var(--cards-block-heading-size);
   font-weight: 700;
   line-height: 1.2;
-  color: var(--cards-block-text);
+  color: var(--cards-block-text-color);
   margin: 0;
 }
 
-/* ── Card grid ──────────────────────────────────────────────────────────── */
+/* ── Card grid ──────────────────────────────────────────────── */
 
 .cards-block > ul.cards-block-list {
   list-style: none;
@@ -71,150 +73,152 @@
   }
 }
 
-/* ── Card item ──────────────────────────────────────────────────────────── */
+/* ── Individual card ────────────────────────────────────────── */
 
 .cards-block-item {
-  display: flex;
-  flex-direction: column;
-}
-
-.cards-block-article {
-  display: flex;
-  flex-direction: column;
-  height: 100%;
   background-color: var(--cards-block-card-bg);
+  border: var(--cards-block-border);
   border-radius: var(--cards-block-card-radius);
   box-shadow: var(--cards-block-card-shadow);
   overflow: hidden;
+  display: flex;
+  flex-direction: column;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
-.cards-block-article:hover {
+.cards-block-item:hover {
   box-shadow: var(--cards-block-card-shadow-hover);
   transform: translateY(-2px);
 }
 
-/* ── Card image ─────────────────────────────────────────────────────────── */
+/* ── Card image ─────────────────────────────────────────────── */
 
 .cards-block-item-image {
   line-height: 0;
   flex-shrink: 0;
 }
 
-.cards-block-item-image img,
-.cards-block-item-image picture img {
+.cards-block-item-image picture {
+  display: block;
   width: 100%;
-  aspect-ratio: 16 / 9;
+}
+
+.cards-block-item-image img {
+  width: 100%;
+  aspect-ratio: var(--cards-block-image-ratio);
   object-fit: cover;
   object-position: center;
   display: block;
   height: auto;
 }
 
-/* ── Card body ──────────────────────────────────────────────────────────── */
+/* ── Card body ──────────────────────────────────────────────── */
 
 .cards-block-item-body {
+  padding: var(--cards-block-body-padding);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  padding: 1.25rem 1.25rem 1.5rem;
   flex: 1 1 auto;
 }
 
-/* ── Emoji icon ─────────────────────────────────────────────────────────── */
+/* ── Emoji icon ─────────────────────────────────────────────── */
 
 .cards-block-item-icon {
-  font-size: 1.75rem;
+  font-size: var(--cards-block-icon-size);
   line-height: 1;
   margin: 0 0 0.25rem;
-  user-select: none;
+  padding: 0;
 }
 
-/* ── Card title ─────────────────────────────────────────────────────────── */
+/* ── Card title ─────────────────────────────────────────────── */
 
 .cards-block-item-title {
-  font-size: var(--heading-font-size-s, clamp(1rem, 2.5vw, 1.25rem));
+  font-size: var(--cards-block-title-size);
   font-weight: 700;
   line-height: 1.3;
-  color: var(--cards-block-text);
+  color: var(--cards-block-text-color);
   margin: 0;
 }
 
-/* ── Card description ───────────────────────────────────────────────────── */
+/* ── Card description ───────────────────────────────────────── */
 
 .cards-block-item-description {
-  font-size: var(--body-font-size-m, 1rem);
+  font-size: var(--cards-block-desc-size);
   line-height: 1.6;
-  color: var(--color-text-secondary, #555);
+  color: var(--cards-block-text-muted);
   margin: 0;
 }
 
-.cards-block-item-description:last-child {
+.cards-block-item-description p {
+  margin: 0 0 0.5em;
+}
+
+.cards-block-item-description p:last-child {
   margin-bottom: 0;
 }
 
-/* ── Buttons / CTAs inside cards ────────────────────────────────────────── */
+/* ── Buttons inside cards ───────────────────────────────────── */
 
 .cards-block .button-container {
-  margin-top: auto;
-  padding-top: 0.75rem;
+  margin: 0.5rem 0 0;
 }
 
 .cards-block .button-container a.button {
   display: inline-flex;
   align-items: center;
-  gap: 0.5em;
-  padding: 0.6em 1.4em;
+  gap: 0.4em;
+  padding: 0.6em 1.25em;
   border-radius: 999px;
   font-weight: 600;
   font-style: normal;
+  font-size: var(--body-font-size-s, 0.9rem);
   text-decoration: none;
-  border: 2px solid var(--cards-block-accent);
-  background-color: transparent;
-  color: var(--cards-block-accent);
+  border: 2px solid transparent;
   transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  background-color: transparent;
+  border-color: currentcolor;
+  color: var(--cards-block-text-color);
 }
 
 .cards-block .button-container a.button:hover {
-  background-color: var(--cards-block-accent);
-  color: #fff;
+  background-color: rgba(0, 0, 0, 0.06);
 }
 
 .cards-block .button-container a.button.primary {
-  background-color: var(--cards-block-accent);
-  border-color: var(--cards-block-accent);
+  background-color: var(--cards-block-eyebrow-color);
+  border-color: var(--cards-block-eyebrow-color);
   color: #fff;
 }
 
 .cards-block .button-container a.button.primary:hover {
-  background-color: var(--color-brand-dark, #4338ca);
-  border-color: var(--color-brand-dark, #4338ca);
+  background-color: #4338ca;
+  border-color: #4338ca;
 }
 
 .cards-block .button-container a.button.secondary {
   background-color: transparent;
-  border-color: var(--cards-block-accent);
-  color: var(--cards-block-accent);
+  border-color: currentcolor;
+  color: var(--cards-block-text-color);
 }
 
 .cards-block .button-container a.button.secondary:hover {
-  background-color: var(--cards-block-accent);
-  color: #fff;
+  background-color: rgba(0, 0, 0, 0.06);
 }
 
 .cards-block .button-container a.button:focus-visible {
-  outline: 2px solid var(--cards-block-accent);
+  outline: 2px solid var(--cards-block-eyebrow-color);
   outline-offset: 2px;
 }
 
 .cards-block a:not(.button) {
-  color: var(--cards-block-accent);
+  color: var(--cards-block-eyebrow-color);
   font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }
 
-/* ── Reduced motion ─────────────────────────────────────────────────────── */
+/* ── Reduced motion ─────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
   .cards-block * {
