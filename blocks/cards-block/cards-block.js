@@ -1,4 +1,4 @@
-import { createOptimizedPicture } from '../../scripts/aem.js';
+import { getMetadata } from '../../scripts/aem.js';
 
 function decorateButtons(container) {
   container.querySelectorAll('a').forEach((a) => {
@@ -23,126 +23,115 @@ function decorateButtons(container) {
 export default function decorate(block) {
   const rows = [...block.children];
 
-  // Detect leading non-repeating zones: eyebrow (p) and section-headline (h2)
-  // These appear as rows before the repeating card rows.
-  // A card row has multiple cells (image, icon, title, description).
-  // A header row typically has a single cell with a p or h2.
-
-  let headerEndIndex = 0;
-  const headerEl = document.createElement('div');
-  headerEl.className = 'cards-block-header';
+  // Detect optional one-off header rows (eyebrow and/or section headline)
+  // that appear BEFORE the repeating card rows.
+  // A header row has a single cell containing a <p> (eyebrow) or <h2> (section headline).
+  // Card rows always have more than one cell OR contain an image.
+  let headerRowCount = 0;
+  const headerSection = document.createElement('div');
+  headerSection.className = 'cards-block-header';
 
   for (let i = 0; i < rows.length; i += 1) {
     const row = rows[i];
     const cells = [...row.children];
+    // A header row has exactly one cell and no image inside it
+    const isSingleCell = cells.length === 1;
+    const hasImage = !!row.querySelector('img');
+    const hasHeadingOrEyebrow = !!row.querySelector('h1, h2, h3, h4, h5, h6') ||
+      (isSingleCell && cells[0].querySelector('p') && !cells[0].querySelector('a'));
 
-    // If the row has only one cell and contains an h2 or a lone p (eyebrow), treat it as a header row
-    if (cells.length === 1) {
-      const cell = cells[0];
-      const hasH2 = cell.querySelector('h2');
-      const hasH1 = cell.querySelector('h1');
-      const hasH3 = cell.querySelector('h3');
-      const hasImg = cell.querySelector('img, picture');
-
-      if ((hasH2 || hasH1) && !hasImg) {
-        // Section headline row
-        const headline = hasH2 || hasH1;
-        headerEl.append(headline);
-        headerEndIndex = i + 1;
-        continue;
+    if (isSingleCell && !hasImage && hasHeadingOrEyebrow) {
+      // Could be eyebrow or section headline
+      const h2 = row.querySelector('h2');
+      const p = row.querySelector('p');
+      if (h2) {
+        h2.className = 'cards-block-section-headline';
+        headerSection.append(h2);
+        headerRowCount = i + 1;
+      } else if (p && !p.querySelector('a')) {
+        p.className = 'cards-block-eyebrow';
+        headerSection.append(p);
+        headerRowCount = i + 1;
+      } else {
+        break;
       }
-
-      if (!hasH2 && !hasH1 && !hasH3 && !hasImg) {
-        // Likely an eyebrow paragraph row
-        const eyebrow = cell.querySelector('p');
-        if (eyebrow) {
-          eyebrow.className = 'cards-block-eyebrow';
-          headerEl.append(eyebrow);
-          headerEndIndex = i + 1;
-          continue;
-        }
-      }
+    } else {
+      break;
     }
-
-    // Once we hit a row that doesn't match header patterns, stop
-    break;
   }
 
-  // Build the cards list from remaining rows
-  const cardRows = rows.slice(headerEndIndex);
+  // Build the card list from remaining rows
+  const cardRows = rows.slice(headerRowCount);
   const ul = document.createElement('ul');
   ul.className = 'cards-block-list';
+  ul.setAttribute('role', 'list');
 
   cardRows.forEach((row) => {
     const li = document.createElement('li');
     li.className = 'cards-block-item';
 
-    const cells = [...row.children];
+    // Move all cells into the li
+    while (row.firstElementChild) li.append(row.firstElementChild);
 
-    cells.forEach((cell) => {
-      const hasPicture = cell.querySelector('picture');
-      const hasImg = cell.querySelector('img');
-      const hasH3 = cell.querySelector('h3');
-      const hasH2 = cell.querySelector('h2');
-
-      if ((hasPicture || hasImg) && !hasH3 && !hasH2) {
-        // Card image cell
+    // Step 1 — classify image cells
+    [...li.children].forEach((cell) => {
+      const isImageCell = cell.querySelector('picture, img') &&
+        cell.children.length === 1 &&
+        !cell.querySelector('h1, h2, h3, h4, h5, h6');
+      if (isImageCell) {
         cell.className = 'cards-block-item-image';
-
-        // Ensure lazy loading for card images (below fold)
+        // Ensure img has loading lazy for below-fold cards
         const img = cell.querySelector('img');
         if (img) {
           if (!img.getAttribute('loading')) {
             img.setAttribute('loading', 'lazy');
           }
-          // Preserve existing alt; if empty, leave it (decorative images are fine with empty alt)
+          // Preserve existing alt; if empty, leave it (decorative handled by CSS)
         }
-
-        li.append(cell);
-      } else {
-        // Card body cell: may contain icon (p with emoji), title (h3), description (p)
-        cell.className = 'cards-block-item-body';
-
-        // Classify children within the body cell
-        [...cell.children].forEach((child) => {
-          const tag = child.tagName;
-
-          if (tag === 'H3' || tag === 'H2') {
-            child.className = 'cards-block-item-title';
-          } else if (tag === 'P' || tag === 'DIV') {
-            // Distinguish icon (emoji-only paragraph) from description
-            const text = child.textContent.trim();
-            // Check if the paragraph contains only emoji characters (no links, no long text)
-            const isEmoji = text.length <= 4 && /\p{Emoji}/u.test(text) && !child.querySelector('a, img, picture');
-
-            if (isEmoji) {
-              child.className = 'cards-block-item-icon';
-              child.setAttribute('aria-hidden', 'true');
-            } else {
-              child.className = 'cards-block-item-description';
-            }
-          }
-        });
-
-        li.append(cell);
       }
     });
 
-    decorateButtons(li);
+    // Step 2 — merge all non-image cells into one body wrapper
+    const body = document.createElement('div');
+    body.className = 'cards-block-item-body';
+    [...li.children].forEach((cell) => {
+      if (cell.classList.contains('cards-block-item-image')) return;
+      while (cell.firstChild) body.append(cell.firstChild);
+      cell.remove();
+    });
+    li.append(body);
+
+    // Step 3 — classify elements inside the body
+    [...body.children].forEach((el) => {
+      if (/^H[1-6]$/.test(el.tagName)) {
+        el.className = 'cards-block-item-title';
+      } else if (
+        el.tagName === 'P' &&
+        el.textContent.trim().length <= 4 &&
+        !el.querySelector('a')
+      ) {
+        // Emoji icon — short text, no link
+        el.className = 'cards-block-item-icon';
+        el.setAttribute('aria-hidden', 'true');
+      } else {
+        el.className = 'cards-block-item-description';
+      }
+    });
+
     ul.append(li);
   });
 
-  // Set ARIA attributes on the block for accessibility
-  block.setAttribute('role', 'region');
-  block.setAttribute('aria-label', 'Benefits');
+  // Assemble final block structure
+  const wrapper = document.createElement('div');
+  wrapper.className = 'cards-block-inner';
+  wrapper.setAttribute('role', 'region');
+  wrapper.setAttribute('aria-label', 'Benefits');
 
-  // Compose final DOM
-  const fragment = document.createDocumentFragment();
-
-  if (headerEl.children.length > 0) {
-    fragment.append(headerEl);
+  if (headerSection.children.length > 0) {
+    wrapper.append(headerSection);
   }
+  wrapper.append(ul);
 
-  fragment.append(ul);
-  block.replaceChildren(fragment);
+  block.replaceChildren(wrapper);
+  decorateButtons(wrapper);
 }
