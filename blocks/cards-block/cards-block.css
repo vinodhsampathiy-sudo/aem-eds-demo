@@ -1,18 +1,19 @@
 .cards-block {
-  --cards-block-bg: var(--background-color, #fff);
+  --cards-block-bg: transparent;
   --cards-block-text: var(--color-text, #1a1a1a);
   --cards-block-eyebrow-color: var(--color-brand, #4f46e5);
   --cards-block-eyebrow-size: var(--body-font-size-s, 0.875rem);
-  --cards-block-headline-size: var(--heading-font-size-xl, clamp(1.75rem, 4vw, 2.75rem));
-  --cards-block-card-bg: var(--color-surface, #f8f8f8);
+  --cards-block-headline-size: var(--heading-font-size-xl, clamp(1.75rem, 4vw, 2.5rem));
+  --cards-block-card-bg: var(--background-color, #fff);
   --cards-block-card-radius: 12px;
-  --cards-block-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
-  --cards-block-card-shadow-hover: 0 6px 20px rgba(0, 0, 0, 0.12);
-  --cards-block-gap: clamp(1rem, 3vw, 1.5rem);
+  --cards-block-card-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
+  --cards-block-card-shadow-hover: 0 6px 24px rgba(0, 0, 0, 0.13);
+  --cards-block-gap: 24px;
   --cards-block-padding: clamp(2rem, 5vw, 5rem) clamp(1rem, 5vw, 2rem);
-  --cards-block-icon-size: 2rem;
-  --cards-block-title-size: var(--heading-font-size-s, clamp(1rem, 2vw, 1.25rem));
+  --cards-block-accent: var(--color-brand, #4f46e5);
+  --cards-block-title-size: var(--heading-font-size-m, clamp(1rem, 2vw, 1.25rem));
   --cards-block-desc-size: var(--body-font-size-m, 1rem);
+  --cards-block-icon-size: 1.75rem;
 
   background-color: var(--cards-block-bg);
   color: var(--cards-block-text);
@@ -21,32 +22,47 @@
   width: 100%;
 }
 
-/* ── Section header ─────────────────────────────────────────────── */
+/* ── Inner wrapper ─────────────────────────────────────────────────────────── */
+
+.cards-block-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* ── Header section (eyebrow + headline) ───────────────────────────────────── */
+
+.cards-block-header {
+  text-align: center;
+  margin-bottom: clamp(1.5rem, 4vw, 3rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+}
 
 .cards-block-eyebrow {
-  display: block;
+  display: inline-block;
+  color: var(--cards-block-eyebrow-color);
   font-size: var(--cards-block-eyebrow-size);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--cards-block-eyebrow-color);
-  margin: 0 0 0.75rem;
-  text-align: center;
+  margin: 0;
+  padding: 0;
 }
 
-.cards-block > h2,
 .cards-block-section-headline {
   font-size: var(--cards-block-headline-size);
   font-weight: 700;
   line-height: 1.2;
   color: var(--cards-block-text);
-  margin: 0 0 clamp(1.5rem, 4vw, 3rem);
-  text-align: center;
+  margin: 0;
+  padding: 0;
 }
 
-/* ── Grid ───────────────────────────────────────────────────────── */
+/* ── Card list grid ────────────────────────────────────────────────────────── */
 
-.cards-block > ul {
+.cards-block-list {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -56,103 +72,167 @@
 }
 
 @media (min-width: 600px) {
-  .cards-block > ul {
+  .cards-block-list {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (min-width: 900px) {
-  .cards-block > ul {
+  .cards-block-list {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   }
 }
 
-/* ── Card item ──────────────────────────────────────────────────── */
+/* ── Individual card ───────────────────────────────────────────────────────── */
 
-.cards-block > ul > li {
+.cards-block-item {
+  display: flex;
+  flex-direction: column;
   background-color: var(--cards-block-card-bg);
   border-radius: var(--cards-block-card-radius);
   box-shadow: var(--cards-block-card-shadow);
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
-.cards-block > ul > li:hover {
+.cards-block-item:hover {
   box-shadow: var(--cards-block-card-shadow-hover);
   transform: translateY(-2px);
 }
 
-/* ── Card image ─────────────────────────────────────────────────── */
+/* ── Card image ────────────────────────────────────────────────────────────── */
 
-.cards-block-item-card-image {
+.cards-block-item-image {
   line-height: 0;
-  overflow: hidden;
+  flex-shrink: 0;
 }
 
-.cards-block-item-card-image img {
+.cards-block-item-image picture {
+  display: block;
+  width: 100%;
+}
+
+.cards-block-item-image img {
   width: 100%;
   aspect-ratio: 16 / 9;
   object-fit: cover;
   object-position: center;
   display: block;
-  transition: transform 0.3s ease;
+  height: auto;
 }
 
-.cards-block > ul > li:hover .cards-block-item-card-image img {
-  transform: scale(1.03);
-}
-
-/* ── Card body ──────────────────────────────────────────────────── */
+/* ── Card body ─────────────────────────────────────────────────────────────── */
 
 .cards-block-item-body {
-  padding: 0.75rem 0.75rem 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  flex: 1;
+  padding: 1.25rem 1.25rem 1.5rem;
+  flex: 1 1 auto;
 }
 
-/* ── Card icon ──────────────────────────────────────────────────── */
+/* ── Emoji icon ────────────────────────────────────────────────────────────── */
 
-.cards-block-item-card-icon {
+.cards-block-item-icon {
   font-size: var(--cards-block-icon-size);
   line-height: 1;
   margin: 0 0 0.25rem;
+  padding: 0;
+  user-select: none;
 }
 
-.cards-block-item-card-icon p {
-  margin: 0;
-  font-size: inherit;
-  line-height: 1;
-}
+/* ── Card title ────────────────────────────────────────────────────────────── */
 
-/* ── Card title ─────────────────────────────────────────────────── */
-
-.cards-block-item-card-title {
-  margin: 0;
+.cards-block-item-title {
   font-size: var(--cards-block-title-size);
   font-weight: 700;
   line-height: 1.3;
   color: var(--cards-block-text);
+  margin: 0;
+  padding: 0;
 }
 
-/* ── Card description ───────────────────────────────────────────── */
+/* ── Card description ──────────────────────────────────────────────────────── */
 
-.cards-block-item-card-description {
-  margin: 0;
+.cards-block-item-description {
   font-size: var(--cards-block-desc-size);
   line-height: 1.6;
-  color: var(--cards-block-text);
-  opacity: 0.8;
-}
-
-.cards-block-item-card-description p {
+  color: var(--color-text-secondary, #555);
   margin: 0;
+  padding: 0;
 }
 
-/* ── Reduced motion ─────────────────────────────────────────────── */
+.cards-block-item-description p {
+  margin: 0 0 0.5em;
+}
+
+.cards-block-item-description p:last-child {
+  margin-bottom: 0;
+}
+
+/* ── Buttons / CTAs ────────────────────────────────────────────────────────── */
+
+.cards-block .button-container {
+  margin: 0.5rem 0 0;
+}
+
+.cards-block .button-container a.button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5em;
+  padding: 0.6em 1.25em;
+  border-radius: 999px;
+  font-weight: 600;
+  font-style: normal;
+  font-size: var(--body-font-size-s, 0.875rem);
+  text-decoration: none;
+  border: 2px solid var(--cards-block-accent);
+  background-color: transparent;
+  color: var(--cards-block-accent);
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  cursor: pointer;
+}
+
+.cards-block .button-container a.button:hover {
+  background-color: var(--cards-block-accent);
+  color: #fff;
+}
+
+.cards-block .button-container a.button.primary {
+  background-color: var(--cards-block-accent);
+  border-color: var(--cards-block-accent);
+  color: #fff;
+}
+
+.cards-block .button-container a.button.primary:hover {
+  background-color: var(--color-brand-dark, #4338ca);
+  border-color: var(--color-brand-dark, #4338ca);
+}
+
+.cards-block .button-container a.button.secondary {
+  background-color: transparent;
+  border-color: var(--cards-block-accent);
+  color: var(--cards-block-accent);
+}
+
+.cards-block .button-container a.button.secondary:hover {
+  background-color: var(--cards-block-accent);
+  color: #fff;
+}
+
+.cards-block .button-container a.button:focus-visible {
+  outline: 2px solid var(--cards-block-accent);
+  outline-offset: 3px;
+}
+
+.cards-block a:not(.button) {
+  color: var(--cards-block-accent);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+}
+
+/* ── Reduced motion ────────────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
   .cards-block * {
