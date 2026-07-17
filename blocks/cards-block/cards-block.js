@@ -20,72 +20,62 @@ function decorateButtons(container) {
   });
 }
 
-function isHeaderRow(row) {
-  return !!(row.querySelector('h1, h2') || (row.children.length === 1 && !row.querySelector('img, picture')));
+function optimizeImages(container, eager) {
+  container.querySelectorAll('img').forEach((img) => {
+    const picture = createOptimizedPicture(img.src, img.alt || '', eager, [{ width: '750' }]);
+    const original = img.closest('picture') ?? img;
+    original.replaceWith(picture);
+  });
 }
 
 export default function decorate(block) {
   const rows = [...block.children];
 
-  // Detect optional eyebrow and heading rows that appear before the repeating cards.
-  // These are single-cell rows containing a <p> (eyebrow) or <h2> (heading) — NOT card rows.
-  let headerEndIndex = 0;
-  let eyebrow = null;
-  let heading = null;
+  // Detect optional eyebrow and headline rows that appear before the repeating cards.
+  // Strategy: rows that contain an h2 are the headline row; a row immediately before
+  // the headline row that contains only a <p> (no img, no h-tag) is the eyebrow row.
+  // All remaining rows are card rows.
 
-  // Check first row for eyebrow (p without h2) or heading (h2)
-  for (let i = 0; i < rows.length; i += 1) {
-    const row = rows[i];
-    const hasImage = row.querySelector('img, picture');
-    const hasHeading = row.querySelector('h1, h2, h3, h4, h5, h6');
-    const cellCount = row.children.length;
+  let eyebrowRow = null;
+  let headlineRow = null;
 
-    // A header row has no image and is a single cell
-    if (!hasImage && cellCount === 1) {
-      const h2 = row.querySelector('h2');
-      const p = row.querySelector('p');
-      if (h2 && !eyebrow && !heading) {
-        heading = h2;
-        headerEndIndex = i + 1;
-      } else if (h2 && eyebrow && !heading) {
-        heading = h2;
-        headerEndIndex = i + 1;
-      } else if (!h2 && p && !eyebrow && !heading) {
-        // Could be eyebrow — check if next row is heading
-        const nextRow = rows[i + 1];
-        if (nextRow && nextRow.querySelector('h2') && !nextRow.querySelector('img, picture')) {
-          eyebrow = p;
-          headerEndIndex = i + 1;
-        } else {
-          // Not a header row, stop
-          break;
-        }
-      } else if (!h2 && !hasHeading && eyebrow && !heading) {
-        // Still looking for heading
-        break;
-      } else {
-        break;
+  rows.forEach((row) => {
+    if (!headlineRow && row.querySelector('h2')) {
+      headlineRow = row;
+    }
+  });
+
+  if (headlineRow) {
+    const headlineIndex = rows.indexOf(headlineRow);
+    if (headlineIndex > 0) {
+      const candidate = rows[headlineIndex - 1];
+      const hasHeading = candidate.querySelector('h1,h2,h3,h4,h5,h6');
+      const hasImage = candidate.querySelector('img');
+      if (!hasHeading && !hasImage) {
+        eyebrowRow = candidate;
       }
-    } else {
-      break;
     }
   }
 
-  // Build the section header (eyebrow + heading) if present
-  const sectionHeader = document.createElement('div');
-  sectionHeader.className = 'cards-block-header';
+  const introRows = new Set([eyebrowRow, headlineRow].filter(Boolean));
+  const cardRows = rows.filter((row) => !introRows.has(row));
 
-  if (eyebrow) {
-    eyebrow.className = 'cards-block-eyebrow';
-    sectionHeader.append(eyebrow);
+  // --- Build intro section (eyebrow + headline) ---
+  const intro = document.createElement('div');
+  intro.className = 'cards-block-intro';
+
+  if (eyebrowRow) {
+    const eyebrowEl = eyebrowRow.querySelector('p') ?? document.createElement('p');
+    eyebrowEl.className = 'cards-block-eyebrow';
+    intro.append(eyebrowEl);
   }
-  if (heading) {
-    sectionHeader.append(heading);
+
+  if (headlineRow) {
+    const headlineEl = headlineRow.querySelector('h2') ?? document.createElement('h2');
+    intro.append(headlineEl);
   }
 
-  // Build the card list from remaining rows
-  const cardRows = rows.slice(headerEndIndex);
-
+  // --- Build repeating card list ---
   const ul = document.createElement('ul');
   ul.className = 'cards-block-list';
 
@@ -96,26 +86,17 @@ export default function decorate(block) {
     // Move all cells from the row into the li
     while (row.firstElementChild) li.append(row.firstElementChild);
 
-    // Step 1 — classify image cells
+    // Step 1 — identify and classify the image cell
     [...li.children].forEach((cell) => {
       const isImageCell = cell.querySelector('picture, img') &&
-        cell.children.length >= 1 &&
-        !cell.querySelector('h1, h2, h3, h4, h5, h6');
-      // Check if the cell is primarily an image (picture/img is the main content)
-      const pics = cell.querySelectorAll('picture, img');
-      const hasOnlyMedia = pics.length > 0 && cell.textContent.trim().length === 0;
-      if (hasOnlyMedia) {
+        !cell.querySelector('h1,h2,h3,h4,h5,h6') &&
+        cell.querySelector('picture, img');
+      if (isImageCell) {
         cell.className = 'cards-block-item-image';
-        // Ensure images are lazy-loaded (non-hero)
-        cell.querySelectorAll('img').forEach((img) => {
-          if (!img.getAttribute('loading')) {
-            img.setAttribute('loading', 'lazy');
-          }
-        });
       }
     });
 
-    // Step 2 — merge all non-image cells into one body wrapper
+    // Step 2 — merge all non-image cells into one shared body wrapper
     const body = document.createElement('div');
     body.className = 'cards-block-item-body';
 
@@ -136,7 +117,7 @@ export default function decorate(block) {
         el.textContent.trim().length <= 4 &&
         !el.querySelector('a')
       ) {
-        // Short text with no link → emoji icon
+        // Emoji icon — short text, no link
         el.className = 'cards-block-item-icon';
         el.setAttribute('aria-hidden', 'true');
       } else {
@@ -147,16 +128,20 @@ export default function decorate(block) {
     ul.append(li);
   });
 
-  // Assemble the block
+  // --- Assemble block ---
   const fragment = document.createDocumentFragment();
-  if (eyebrow || heading) {
-    fragment.append(sectionHeader);
-  }
+  if (intro.children.length > 0) fragment.append(intro);
   fragment.append(ul);
 
+  block.replaceChildren(fragment);
+
+  // --- Accessibility: region landmark ---
   block.setAttribute('role', 'region');
   block.setAttribute('aria-label', 'Benefits');
 
-  block.replaceChildren(fragment);
-  decorateButtons(block);
+  // --- Optimize images (eager=false — cards are below the fold) ---
+  optimizeImages(ul, false);
+
+  // --- Decorate any links inside cards ---
+  decorateButtons(ul);
 }

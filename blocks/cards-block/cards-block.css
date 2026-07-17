@@ -1,58 +1,54 @@
 .cards-block {
-  --cards-block-bg: var(--background-color, #fff);
-  --cards-block-card-bg: #fff;
-  --cards-block-card-radius: 12px;
-  --cards-block-card-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-  --cards-block-card-shadow-hover: 0 6px 24px rgba(0, 0, 0, 0.13);
-  --cards-block-gap: 24px;
-  --cards-block-padding: clamp(2rem, 5vw, 4rem) clamp(1rem, 4vw, 2rem);
+  --cards-block-bg: transparent;
+  --cards-block-text: var(--color-text, #1a1a1a);
   --cards-block-eyebrow-color: var(--color-brand, #4f46e5);
-  --cards-block-eyebrow-size: var(--body-font-size-s, 0.85rem);
-  --cards-block-heading-size: var(--heading-font-size-xl, clamp(1.75rem, 4vw, 2.5rem));
-  --cards-block-title-size: var(--heading-font-size-s, clamp(1rem, 2vw, 1.2rem));
-  --cards-block-desc-size: var(--body-font-size-m, 1rem);
-  --cards-block-icon-size: 1.75rem;
-  --cards-block-image-ratio: 4 / 3;
-  --cards-block-body-padding: 1.25rem;
-  --cards-block-text-color: var(--color-text, #1a1a1a);
-  --cards-block-text-muted: var(--color-text-muted, #555);
-  --cards-block-border: 1px solid #e8e8e8;
-}
+  --cards-block-eyebrow-size: var(--body-font-size-s, 0.875rem);
+  --cards-block-headline-size: var(--heading-font-size-xl, clamp(1.75rem, 4vw, 2.5rem));
+  --cards-block-card-bg: var(--background-color, #fff);
+  --cards-block-card-border: #e5e7eb;
+  --cards-block-card-radius: 12px;
+  --cards-block-card-shadow: 0 2px 8px rgba(0, 0, 0, 0.07);
+  --cards-block-card-shadow-hover: 0 6px 20px rgba(0, 0, 0, 0.12);
+  --cards-block-gap: 24px;
+  --cards-block-padding: clamp(2rem, 5vw, 4rem);
+  --cards-block-accent: var(--color-brand, #4f46e5);
 
-.cards-block {
-  background-color: var(--cards-block-bg);
-  padding: var(--cards-block-padding);
   box-sizing: border-box;
+  width: 100%;
+  padding: var(--cards-block-padding) clamp(1rem, 4vw, 2rem);
+  background-color: var(--cards-block-bg);
+  color: var(--cards-block-text);
 }
 
-/* ── Section header ─────────────────────────────────────────── */
-
-.cards-block-header {
+/* ── Intro section ── */
+.cards-block-intro {
   text-align: center;
-  margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+  margin-bottom: clamp(2rem, 4vw, 3rem);
+  max-width: 720px;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .cards-block-eyebrow {
   display: inline-block;
-  color: var(--cards-block-eyebrow-color);
   font-size: var(--cards-block-eyebrow-size);
   font-weight: 700;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  margin: 0 0 0.5rem;
+  color: var(--cards-block-eyebrow-color);
+  margin: 0 0 0.75rem;
 }
 
-.cards-block-header h2 {
-  font-size: var(--cards-block-heading-size);
+.cards-block-intro h2 {
+  font-size: var(--cards-block-headline-size);
   font-weight: 700;
   line-height: 1.2;
-  color: var(--cards-block-text-color);
   margin: 0;
+  color: var(--cards-block-text);
 }
 
-/* ── Card grid ──────────────────────────────────────────────── */
-
-.cards-block > ul.cards-block-list {
+/* ── Card grid ── */
+.cards-block-list {
   list-style: none;
   margin: 0;
   padding: 0;
@@ -62,27 +58,32 @@
 }
 
 @media (min-width: 600px) {
-  .cards-block > ul.cards-block-list {
-    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  .cards-block-list {
+    grid-template-columns: repeat(2, 1fr);
   }
 }
 
 @media (min-width: 900px) {
-  .cards-block > ul.cards-block-list {
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  .cards-block-list {
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   }
 }
 
-/* ── Individual card ────────────────────────────────────────── */
+@media (min-width: 1200px) {
+  .cards-block-list {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
 
+/* ── Individual card ── */
 .cards-block-item {
+  display: flex;
+  flex-direction: column;
   background-color: var(--cards-block-card-bg);
-  border: var(--cards-block-border);
+  border: 1px solid var(--cards-block-card-border);
   border-radius: var(--cards-block-card-radius);
   box-shadow: var(--cards-block-card-shadow);
   overflow: hidden;
-  display: flex;
-  flex-direction: column;
   transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
@@ -91,8 +92,7 @@
   transform: translateY(-2px);
 }
 
-/* ── Card image ─────────────────────────────────────────────── */
-
+/* ── Card image ── */
 .cards-block-item-image {
   line-height: 0;
   flex-shrink: 0;
@@ -105,121 +105,112 @@
 
 .cards-block-item-image img {
   width: 100%;
-  aspect-ratio: var(--cards-block-image-ratio);
+  aspect-ratio: 16 / 9;
   object-fit: cover;
   object-position: center;
   display: block;
   height: auto;
 }
 
-/* ── Card body ──────────────────────────────────────────────── */
-
+/* ── Card body ── */
 .cards-block-item-body {
-  padding: var(--cards-block-body-padding);
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  flex: 1 1 auto;
+  padding: 1.25rem 1.25rem 1.5rem;
+  flex: 1;
 }
 
-/* ── Emoji icon ─────────────────────────────────────────────── */
-
+/* ── Emoji icon ── */
 .cards-block-item-icon {
-  font-size: var(--cards-block-icon-size);
+  font-size: 1.75rem;
   line-height: 1;
   margin: 0 0 0.25rem;
-  padding: 0;
+  display: block;
 }
 
-/* ── Card title ─────────────────────────────────────────────── */
-
+/* ── Card title ── */
 .cards-block-item-title {
-  font-size: var(--cards-block-title-size);
+  font-size: var(--heading-font-size-s, clamp(1rem, 2vw, 1.25rem));
   font-weight: 700;
   line-height: 1.3;
-  color: var(--cards-block-text-color);
   margin: 0;
+  color: var(--cards-block-text);
 }
 
-/* ── Card description ───────────────────────────────────────── */
-
+/* ── Card description ── */
 .cards-block-item-description {
-  font-size: var(--cards-block-desc-size);
+  font-size: var(--body-font-size-m, 1rem);
   line-height: 1.6;
-  color: var(--cards-block-text-muted);
+  color: var(--color-text-secondary, #4b5563);
   margin: 0;
 }
 
 .cards-block-item-description p {
-  margin: 0 0 0.5em;
+  margin: 0;
 }
 
-.cards-block-item-description p:last-child {
-  margin-bottom: 0;
-}
-
-/* ── Buttons inside cards ───────────────────────────────────── */
-
+/* ── Buttons inside cards ── */
 .cards-block .button-container {
-  margin: 0.5rem 0 0;
+  margin-top: auto;
+  padding-top: 0.75rem;
 }
 
 .cards-block .button-container a.button {
   display: inline-flex;
   align-items: center;
-  gap: 0.4em;
+  gap: 0.5em;
   padding: 0.6em 1.25em;
   border-radius: 999px;
   font-weight: 600;
   font-style: normal;
-  font-size: var(--body-font-size-s, 0.9rem);
   text-decoration: none;
-  border: 2px solid transparent;
-  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+  border: 2px solid var(--cards-block-accent);
   background-color: transparent;
-  border-color: currentcolor;
-  color: var(--cards-block-text-color);
+  color: var(--cards-block-accent);
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
 }
 
 .cards-block .button-container a.button:hover {
-  background-color: rgba(0, 0, 0, 0.06);
+  background-color: var(--cards-block-accent);
+  color: #fff;
 }
 
 .cards-block .button-container a.button.primary {
-  background-color: var(--cards-block-eyebrow-color);
-  border-color: var(--cards-block-eyebrow-color);
+  background-color: var(--cards-block-accent);
+  border-color: var(--cards-block-accent);
   color: #fff;
 }
 
 .cards-block .button-container a.button.primary:hover {
-  background-color: #4338ca;
-  border-color: #4338ca;
+  background-color: transparent;
+  color: var(--cards-block-accent);
 }
 
 .cards-block .button-container a.button.secondary {
   background-color: transparent;
-  border-color: currentcolor;
-  color: var(--cards-block-text-color);
+  border-color: var(--cards-block-accent);
+  color: var(--cards-block-accent);
 }
 
 .cards-block .button-container a.button.secondary:hover {
-  background-color: rgba(0, 0, 0, 0.06);
+  background-color: var(--cards-block-accent);
+  color: #fff;
 }
 
 .cards-block .button-container a.button:focus-visible {
-  outline: 2px solid var(--cards-block-eyebrow-color);
+  outline: 2px solid var(--cards-block-accent);
   outline-offset: 2px;
 }
 
 .cards-block a:not(.button) {
-  color: var(--cards-block-eyebrow-color);
+  color: var(--cards-block-accent);
   font-weight: 600;
   text-decoration: underline;
   text-underline-offset: 0.2em;
 }
 
-/* ── Reduced motion ─────────────────────────────────────────── */
-
+/* ── Reduced motion ── */
 @media (prefers-reduced-motion: reduce) {
   .cards-block * {
     animation-duration: 0.01ms !important;

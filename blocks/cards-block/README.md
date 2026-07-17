@@ -1,61 +1,54 @@
 # cards-block
 
-A responsive grid block that displays a collection of benefit cards arranged in three columns on desktop. Each card features a full-width photo with rounded top corners, a small emoji icon badge, a bold title, and a short descriptive paragraph. The block supports an optional eyebrow label and a centered section heading displayed above the card grid. Authors can add or remove card rows to control how many cards appear.
+A responsive benefit card grid that displays a collection of cards arranged in three columns on desktop. Each card features a full-width photo, an emoji icon badge, a bold title, and a short descriptive paragraph. The grid is introduced by an optional eyebrow label and a centered section headline, making it well-suited for showcasing product features, service benefits, or key differentiators.
 
 ---
 
 ## Content Model
 
-| Field | Description |
-| ----- | ----- |
-| **Row 1** | `eyebrow` — Short section label displayed in orange uppercase text above the main heading *(optional)* |
-| **Row 2** | `heading` — Main section heading displayed in large bold centered text above the card grid |
-| **Rows 3 +** | One card per row — four fields per card: image, emoji icon, title, and description |
+Authors build this block by creating a table in Google Docs or Microsoft Word. The first row names the block, the next two rows define the shared section header, and every subsequent row defines one card. Add or remove rows to add or remove cards.
 
-### Per-Card Fields (4 columns)
-
-| Column 1 | Column 2 | Column 3 | Column 4 |
-| ----- | ----- | ----- | ----- |
-| `card-image` — Full-width photo | `card-icon` — Emoji icon badge | `card-title` — Bold card title (h3) | `card-description` — Short paragraph |
+| Field | Type | Description |
+|---|---|---|
+| `eyebrow` | `p` | *(Optional)* Small uppercase label displayed above the section headline |
+| `headline` | `h2` | Large bold section heading centered above the card grid |
+| `card-image` | `img` | Full-width photo at the top of the card with rounded top corners — include a descriptive alt text |
+| `card-icon` | `p` | Small emoji icon displayed in a soft rounded square badge below the image |
+| `card-title` | `h3` | Bold card title identifying the benefit |
+| `card-description` | `p` | Short paragraph describing the benefit in one to two sentences |
 
 ---
 
-## Usage Example
+## Table Structure
+
+Each card occupies **one row** with **four columns**: image, icon, title, and description. Add or remove rows to add or remove cards.
 
 | cards-block | | | |
-| ----- | ----- | ----- | ----- |
-| Our Key Benefits | | | |
-| Everything You Need to Succeed | | | |
-| ![Team collaborating in office](/images/collaboration.jpg) | 🤝 | **Seamless Collaboration** | Work together in real time with tools built for modern teams. |
-| ![Developer at laptop](/images/speed.jpg) | ⚡ | **Blazing Fast Performance** | Optimized delivery ensures your users never wait. |
-| ![Shield icon on screen](/images/security.jpg) | 🔒 | **Enterprise-Grade Security** | Your data is protected with industry-leading standards. |
-| ![Analytics dashboard](/images/insights.jpg) | 📊 | **Actionable Insights** | Make smarter decisions with real-time analytics and reporting. |
-| ![Support team on call](/images/support.jpg) | 🎧 | **24/7 Expert Support** | Our team is always on hand to help you succeed. |
-| ![Puzzle pieces connecting](/images/integrations.jpg) | 🔗 | **Flexible Integrations** | Connect with the tools your team already loves. |
+| --- | --- | --- | --- |
+| Our Benefits | | | |
+| Why Choose Us | | | |
+| ![Team collaborating in a modern office](/assets/card-1.jpg) | 🚀 | **Blazing Fast Delivery** | Our global CDN ensures your content reaches users in milliseconds, no matter where they are. |
+| ![Developer working at a standing desk](/assets/card-2.jpg) | 🛠️ | **Easy to Customize** | A flexible block library lets your team build and adapt pages without touching core infrastructure. |
+| ![Dashboard showing uptime metrics](/assets/card-3.jpg) | 📊 | **Real-Time Analytics** | Monitor performance, traffic, and engagement with built-in dashboards updated in real time. |
+| ![Security lock icon on a blue background](/assets/card-4.jpg) | 🔒 | **Enterprise-Grade Security** | End-to-end encryption and automated compliance checks keep your data and users protected. |
+| ![Support agent smiling at camera](/assets/card-5.jpg) | 💬 | **24/7 Expert Support** | Our dedicated support team is available around the clock to resolve issues before they impact users. |
+| ![Gears representing automated workflows](/assets/card-6.jpg) | ⚙️ | **Automated Workflows** | CI/CD pipelines deploy your changes automatically on every push, reducing manual overhead. |
 
-> **Note:** Add or remove card rows (rows 3 and beyond) to add or remove cards from the grid. The eyebrow label in Row 1 is optional — leave the cell empty or remove the row if no eyebrow is needed.
+> **Note:** The eyebrow row (row 2) is optional. If you do not need an eyebrow label, delete that row entirely and start with the headline row.
 
 ---
 
 ## Authoring Notes
 
-### Eyebrow Label (Row 1)
-The eyebrow is optional. If you do not want a section label, leave the first cell empty or omit the row entirely. When present, it renders in orange uppercase text above the heading.
+### Section Header Rows
+- **Row 2 (eyebrow):** Type a short uppercase label, e.g. `Our Benefits`. This row is optional — omit it if no eyebrow is needed.
+- **Row 3 (headline):** Format the text as **Heading 2** in your document. This ensures the rendered `<h2>` is correct for page heading hierarchy.
 
-### Section Heading (Row 2)
-Write the heading as plain text. The block renders it as an `<h2>` element automatically. Keep it concise — one line is ideal.
-
-### Card Images (Column 1)
-Insert an image directly into the cell. Write a meaningful, descriptive alt text for every image so screen readers can convey the card's visual content to users who cannot see it.
-
-### Emoji Icons (Column 2)
-Paste a single emoji character into the cell. The block renders it inside a soft rounded square badge. In the rendered output, emoji icons receive `aria-hidden="true"` automatically; the card title provides the accessible label for the card.
-
-### Card Titles (Column 3)
-Write the title as plain text. The block renders each title as an `<h3>` element, maintaining a correct heading hierarchy beneath the section `<h2>`.
-
-### Card Descriptions (Column 4)
-Keep descriptions short — one to two sentences is ideal. Avoid redundant phrasing already covered by the title.
+### Card Rows
+- **card-image:** Insert an image directly into the cell. Always fill in the image's alt text field with a meaningful description (e.g., `"Team collaborating in a modern office"`). Do not leave alt text blank.
+- **card-icon:** Type the emoji character directly into the cell as plain text (e.g., `🚀`). The block renders it inside a rounded badge.
+- **card-title:** Format the text as **Heading 3** in your document so the rendered output produces an `<h3>` element.
+- **card-description:** Type one to two sentences of plain paragraph text.
 
 ---
 
@@ -65,12 +58,12 @@ This block has no variants.
 
 ---
 
-## Accessibility Notes
+## Accessibility
 
 | Concern | Guidance |
-| ----- | ----- |
-| **Image alt text** | Every card image must have a descriptive `alt` attribute. Write alt text that describes the image content in context, not just "photo" or "image." |
-| **Emoji icons** | Emoji icons are decorative in this context. The block applies `aria-hidden="true"` to the icon badge so screen readers skip it and rely on the card title instead. If the emoji conveys meaning not captured by the title, add an `aria-label` to the badge element in the block's markup. |
-| **Heading hierarchy** | Card titles render as `<h3>` elements nested within a section introduced by the `<h2>` heading. Do not skip heading levels or place the block in a context where this hierarchy would be broken. |
-| **Color contrast** | Body text in card descriptions must meet a minimum contrast ratio of 4.5:1 against the white card background (WCAG 2.1 AA). Avoid light gray text colors for descriptions. |
-| **Keyboard navigation** | If cards contain interactive elements (links or buttons), ensure they are reachable and operable via keyboard in a logical tab order. |
+|---|---|
+| **Card images** | Always provide a descriptive alt attribute when inserting the image in the document. Avoid generic text like `"image"` or `"photo"`. |
+| **Emoji icons** | The block automatically adds `aria-hidden="true"` to emoji icon elements so screen readers skip decorative characters. If the emoji conveys meaning not expressed in the card title or description, contact your developer to add an `aria-label` instead. |
+| **Heading hierarchy** | The section headline must be styled as **Heading 2** and each card title as **Heading 3** in the authoring document. Do not skip heading levels or use bold paragraph text as a substitute. |
+| **Color contrast** | Ensure any text overlaid on card images meets a minimum 4.5:1 contrast ratio (WCAG AA). |
+| **Keyboard navigation** | Cards are navigable in source order. If cards contain links, verify focus indicators are visible in the applied theme. |
